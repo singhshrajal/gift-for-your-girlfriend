@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smile for Me ❤️</title>
+<style>
+    body {
+        background-color: black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+    video {
+        display: none;
+    }
+    .heart {
+        font-size: 100px;
+        color: #ff3366;
+        text-shadow: 0 0 20px #ff3366, 0 0 40px #ff6699;
+        transition: text-shadow 0.3s ease;
+    }
+    .heart.glow {
+        text-shadow: 0 0 30px #ff3366, 0 0 60px #ff6699, 0 0 100px #ff99bb;
+    }
+    button {
+        background-color: #ff3366;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        margin-top: 20px;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #ff6699;
+    }
+</style>
+<script src="https://unpkg.com/face-api.js"></script>
+</head>
+<body>
+    <div class="heart" id="heart">❤️</div>
+    <button id="playBtn">Play Music</button>
+    <video id="video" autoplay muted></video>
+
+<script>
+const video = document.getElementById('video');
+const heart = document.getElementById('heart');
+const playBtn = document.getElementById('playBtn');
+let audio = new Audio('romantic.mp3');
+
+// Start video stream
+async function startVideo() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+    } catch (err) {
+        alert('Please allow camera access for this to work.');
+    }
+}
+
+async function detectSmile() {
+    await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+    await faceapi.nets.faceExpressionNet.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+
+    setInterval(async () => {
+        const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+        if (detections.length > 0) {
+            let smileProb = detections[0].expressions.happy;
+            if (smileProb > 0.3) {
+                heart.classList.add('glow');
+            } else {
+                heart.classList.remove('glow');
+            }
+        }
+    }, 300);
+}
+
+playBtn.addEventListener('click', () => {
+    audio.play();
+});
+
+startVideo().then(detectSmile);
+</script>
+</body>
+</html>
