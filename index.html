@@ -66,8 +66,8 @@ async function startVideo() {
 }
 
 async function detectSmile() {
-    await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
-    await faceapi.nets.faceExpressionNet.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
+   await faceapi.nets.tinyFaceDetector.loadFromUri('./models');
+await faceapi.nets.faceExpressionNet.loadFromUri('./models');
 
     setInterval(async () => {
         const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
@@ -90,3 +90,4 @@ startVideo().then(detectSmile);
 </script>
 </body>
 </html>
+
